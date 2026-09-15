@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "jarvis": {
+      "command": "D:\\FERSONAL\\Jarvis\\.venv\\Scripts\\python.exe",
+      "args": ["-m", "jarvis"],
+      "cwd": "D:\\FERSONAL\\Jarvis",
+      "env": {
+        "PYTHONPATH": "D:\\FERSONAL\\Jarvis",
+        "PYTHONIOENCODING": "utf-8",
+        "JARVIS_HEADLESS": "false",
+        "ANONYMIZED_TELEMETRY": "false"
+      }
+    }
+  }
+}
