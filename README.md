@@ -62,6 +62,13 @@ pip install anthropic          # not a dependency of the MCP path
 python -m jarvis.runner "search youtube for lofi hip hop and list the top 3"
 ```
 
+The runner splits the work across two models. `JARVIS_WORKER_MODEL` (default
+`claude-haiku-4-5`) drives the repetitive `plan_next` / `browser_*` / `plan_observe`
+loop — the overwhelming majority of turns. `JARVIS_SUPERVISOR_MODEL` (default
+`claude-opus-5`) is only called for the initial `plan_create` and for the turn right
+after a step hard-fails, since those are the only turns that need real judgment rather
+than mechanical execution. Every run prints a per-role token/cost breakdown at the end.
+
 ## The loop
 
 The brain does not think. It structures thinking and carries memory between tool calls,
@@ -94,6 +101,7 @@ line — replayable, diffable, and the raw material for new skills.
 ```bash
 export PYTHONPATH=.
 .venv/Scripts/python.exe tests/test_brain.py           # state machine, no browser
+.venv/Scripts/python.exe tests/test_routing.py         # worker/supervisor routing, cost summary
 .venv/Scripts/python.exe tests/test_stdio.py           # real MCP handshake
 JARVIS_HEADLESS=true .venv/Scripts/python.exe tests/test_e2e_youtube.py
 JARVIS_HEADLESS=true .venv/Scripts/python.exe tests/test_e2e_google.py

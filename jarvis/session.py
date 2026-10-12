@@ -43,8 +43,21 @@ class Session:
 		if self.allowed_domains:
 			profile_data['allowed_domains'] = self.allowed_domains
 
-		self.browser = BrowserSession(browser_profile=BrowserProfile(**profile_data))
-		await self.browser.start()
+		# Build and start into a local first. Only assign to self.browser once
+		# start() actually succeeds — a failed start must leave self.browser as
+		# None so the *next* ensure() call launches a fresh session instead of
+		# handing back a half-started, dead one forever.
+		browser = BrowserSession(browser_profile=BrowserProfile(**profile_data))
+		try:
+			await browser.start()
+		except Exception:
+			try:
+				await browser.kill()
+			except Exception:
+				pass
+			raise
+
+		self.browser = browser
 		self.tools = Tools()
 		self.file_system = FileSystem(base_dir=DEFAULT_FS_DIR)
 		return self.browser
